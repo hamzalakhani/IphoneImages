@@ -16,14 +16,30 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    
+    NSURL*url= [NSURL URLWithString:@"https://i.imgur.com/zdwdenZ.png"];
+    
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *session= [NSURLSession sessionWithConfiguration:configuration];
+    
+    NSURLSessionDownloadTask*downloadTask = [session downloadTaskWithURL:url completionHandler:^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        
+        if (error) {
+            NSLog(@"Request failed: %@", error.localizedDescription);
+        }
+        NSData *data= [NSData dataWithContentsOfURL:location];
+        UIImage *image = [UIImage imageWithData:data];
+        [[NSOperationQueue mainQueue]addOperationWithBlock:^{
+            self.phoneImageView.image = image;
+        }];
+        
+        
+        
+    }];
+    [downloadTask resume];
 }
 
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 
 @end
